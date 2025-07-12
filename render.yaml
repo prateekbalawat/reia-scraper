@@ -1,4 +1,4 @@
-Iiitirservices:
+services:
   - type: web
     name: reia-scraper
     env: python
@@ -9,7 +9,5 @@ Iiitirservices:
       pip install -r requirements.txt
     startCommand: gunicorn scraper_api:app
     envVars:
-      - key: PYTHONUNBUFFERED
-        value: "TRUE"
       - key: CHROME_BINARY
         value: "/usr/bin/chromium"
