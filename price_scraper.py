@@ -29,7 +29,7 @@ def scrape_price(location):
     chrome_options.add_argument("--disable-dev-shm-usage")
     
     # ✅ Use environment variable for Chrome binary
-    chrome_binary = os.getenv("CHROME_BINARY", "/usr/bin/chromium")
+    chrome_binary = os.getenv("CHROME_BINARY", "/usr/bin/chromium-browser")
     chrome_options.binary_location = chrome_binary
 
     service = Service(ChromeDriverManager().install())
