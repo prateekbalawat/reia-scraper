@@ -10,6 +10,7 @@ import json
 import time
 from selenium import webdriver
 import logging
+import os
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
@@ -27,6 +28,10 @@ def scrape_price(location):
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
 
+    # ✅ Tell Selenium where to find Chrome binary in Render
+    chrome_options.binary_location = "/usr/bin/chromium"
+
+    # Create Chrome driver with correct service and options
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
@@ -54,7 +59,6 @@ def scrape_price(location):
                 except:
                     name = "Unnamed Property"
 
-                # Try to extract property type once
                 if not property_type:
                     try:
                         type_line = card.find_element(By.XPATH, ".//h2[contains(@class, 'subtitle-style')]").text.strip()
