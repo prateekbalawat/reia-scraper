@@ -1,25 +1,24 @@
-# Use an official Python image
 FROM python:3.10-slim
 
-# Install Chromium and dependencies
+# Install Chromium and Chromedriver
 RUN apt-get update && \
     apt-get install -y chromium chromium-driver && \
-    apt-get clean
+    rm -rf /var/lib/apt/lists/*
 
-# Set environment variable so Selenium can find Chrome
+# Set environment variable for Selenium
 ENV CHROME_BINARY=/usr/bin/chromium
 
 # Set working directory
 WORKDIR /app
 
-# Copy all files
+# Copy source code
 COPY . .
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Install dependencies
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Expose port
-EXPOSE 10000
+EXPOSE 8000
 
-# Start your app with gunicorn
-CMD ["gunicorn", "scraper_api:app", "--bind", "0.0.0.0:10000"]
+# Start the app
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "scraper_api:app"]

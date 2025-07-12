@@ -1,13 +1,10 @@
 services:
   - type: web
     name: reia-scraper
-    env: python
+    runtime: docker
+    repo: https://github.com/prateekbalawat/reia-scraper
+    branch: main
     plan: free
-    buildCommand: |
-      apt-get update && \
-      apt-get install -y chromium chromium-driver && \
-      pip install -r requirements.txt
-    startCommand: gunicorn scraper_api:app
     envVars:
       - key: CHROME_BINARY
         value: "/usr/bin/chromium"

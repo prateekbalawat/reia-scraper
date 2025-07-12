@@ -4,12 +4,12 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from location_slugs import slug_map
+from selenium import webdriver
 import sys
 import json
 import time
-from selenium import webdriver
-import logging
 import os
+import logging
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
@@ -27,11 +27,10 @@ def scrape_price(location):
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
 
-    # Set Chrome binary path from environment
     chrome_binary = os.getenv("CHROME_BINARY", "/usr/bin/chromium")
     chrome_options.binary_location = chrome_binary
 
-    # ✅ Use system ChromeDriver
+    # ✅ Use system-installed chromedriver path
     service = Service("/usr/bin/chromedriver")
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
@@ -89,8 +88,7 @@ def scrape_price(location):
 
                 if not price_elem:
                     try:
-                        potential_prices = card.find_elements(By.XPATH, ".//div")
-                        for elem in potential_prices:
+                        for elem in card.find_elements(By.XPATH, ".//div"):
                             if "₹" in elem.text and "sq.ft" in elem.text:
                                 price_elem = elem
                                 break
@@ -125,7 +123,7 @@ def scrape_price(location):
                 "note": "Used fallback due to scraping issue"
             }
 
-        avg_price = sum([p["price_per_sqft"] for p in nearby_properties]) // len(nearby_properties)
+        avg_price = sum(p["price_per_sqft"] for p in nearby_properties) // len(nearby_properties)
 
         return {
             "location": location,
