@@ -3,14 +3,13 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from webdriver_manager.chrome import ChromeDriverManager
 from location_slugs import slug_map
 import sys
 import json
 import time
 from selenium import webdriver
 import logging
-import os  # ✅ NEW
+import os
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
@@ -27,12 +26,13 @@ def scrape_price(location):
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
-    
-    # ✅ Use environment variable for Chrome binary
-    chrome_binary = os.getenv("CHROME_BINARY", "/usr/bin/chromium-browser")
+
+    # Set Chrome binary path from environment
+    chrome_binary = os.getenv("CHROME_BINARY", "/usr/bin/chromium")
     chrome_options.binary_location = chrome_binary
 
-    service = Service(ChromeDriverManager().install())
+    # ✅ Use system ChromeDriver
+    service = Service("/usr/bin/chromedriver")
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
     try:
