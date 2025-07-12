@@ -10,7 +10,7 @@ import json
 import time
 from selenium import webdriver
 import logging
-import os
+import os  # ✅ NEW
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
@@ -27,11 +27,11 @@ def scrape_price(location):
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
+    
+    # ✅ Use environment variable for Chrome binary
+    chrome_binary = os.getenv("CHROME_BINARY", "/usr/bin/chromium")
+    chrome_options.binary_location = chrome_binary
 
-    # ✅ Tell Selenium where to find Chrome binary in Render
-    chrome_options.binary_location = "/usr/bin/chromium"
-
-    # Create Chrome driver with correct service and options
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
@@ -62,7 +62,6 @@ def scrape_price(location):
                 if not property_type:
                     try:
                         type_line = card.find_element(By.XPATH, ".//h2[contains(@class, 'subtitle-style')]").text.strip()
-                        logging.info(f"Property name raw text: {type_line}")
                         if 'Flat' in type_line or 'apartment' in type_line:
                             property_type = "Apartment"
                         elif 'villa' in type_line:
@@ -101,7 +100,6 @@ def scrape_price(location):
                 if price_elem:
                     price_text = price_elem.text.strip().lower()
                 else:
-                    logging.warning(f"No price found for '{name}' — skipping this listing.")
                     continue
 
                 if "₹" in price_text and "k/sq.ft" in price_text:
@@ -118,7 +116,6 @@ def scrape_price(location):
                 continue
 
         if not nearby_properties:
-            logging.warning("No valid listings found — using fallback price")
             return {
                 "location": location,
                 "current_price_per_sqft": 8500,
