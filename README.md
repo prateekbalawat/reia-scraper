@@ -12,14 +12,6 @@
   - `rental_yield_percent` (fixed at 3%)
 - Can run as a **standalone CLI** or be exposed via a **Flask API**
 
----
-
-## 🗂 Project Structure
-
-reia-scraper/ ├── price_scraper.py # ✅ Main scraping script ├── scraper_api.py # (Optional) Flask API wrapper ├── location_slugs.py # Location → URL slug mapping ├── requirements.txt # Python dependencies └── README.md # This file
-
----
-
 ## ⚙️ Requirements
 
 - Python 3.7+
