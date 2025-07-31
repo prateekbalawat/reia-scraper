@@ -5,10 +5,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from location_slugs import slug_map
 from selenium import webdriver
-import sys
 import json
-import time
-import os
+import sys
 import logging
 
 # Setup logging
@@ -22,25 +20,19 @@ def scrape_price(location):
     city = location.split()[-1].lower()
     url = f"https://housing.com/in/buy/{city}/{slug}"
 
+    # Set Chrome options for headless browsing
     chrome_options = Options()
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
 
-    chrome_binary = os.getenv("CHROME_BINARY", "/usr/bin/chromium")
-    chrome_options.binary_location = chrome_binary
-
-    # ✅ Use system-installed chromedriver path
-    service = Service("/usr/bin/chromedriver")
+    # Use default installed Chrome and chromedriver
+    service = Service()  # Automatically finds chromedriver in PATH
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
     try:
         logging.info(f"Navigating to {url}")
-        try:
-            driver.get(url)
-        except Exception as e:
-            driver.quit()
-            return {"error": f"Failed to load page: {str(e)}"}
+        driver.get(url)
 
         WebDriverWait(driver, 12).until(
             EC.presence_of_element_located((By.XPATH, "//div[contains(@class, 'T_cardV1Style')]"))
@@ -110,7 +102,7 @@ def scrape_price(location):
                             "price_per_sqft": int(price_per_sqft)
                         })
             except Exception as e:
-                logging.warning(f"Skipping card due to unexpected error: {e}")
+                logging.warning(f"Skipping card due to error: {e}")
                 continue
 
         if not nearby_properties:
